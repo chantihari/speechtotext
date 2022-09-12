@@ -47,25 +47,41 @@ const Dictaphone = () => {
       callback: () => setMessage('Hi there!'),
       matchInterim: true
     },
-    {
-      command: 'Yes',
-      callback: (command, spokenPhrase, similarityRatio) => setMessage(`${command} and ${spokenPhrase} are ${similarityRatio * 100}% similar`),
-      // If the spokenPhrase is "Benji", the message would be "Beijing and Benji are 40% similar"
-      isFuzzyMatch: true,
-      fuzzyMatchingThreshold: 0.2
-    },
+    // {
+    //   command: 'yes',
+    //   callback: (command, spokenPhrase, similarityRatio) => alphabetSpeech(command, spokenPhrase, similarityRatio),
+    //   // setMessage(`${command} and ${spokenPhrase} are ${similarityRatio * 100}% similar`),
+    //   // If the spokenPhrase is "Benji", the message would be "Beijing and Benji are 40% similar"
+    //   isFuzzyMatch: true,
+    //   fuzzyMatchingThreshold: 0.2
+    // },
+    
     {
       command: 'clear',
       callback: ({ resetTranscript }) => resetTranscript()
     },
     {
       command: 'ok',
-      callback: () => saveText()
+      callback: () => saveText("ok")
     },
     {
       command: 'stop',
       callback: () => SpeechRecognition.stopListening()
-    }
+    },
+    {
+      command: "alphabet *",
+      callback: (alphabet) => setMessage(` ${alphabet}`),
+     // isFuzzyMatch: true,
+      //fuzzyMatchingThreshold: 0.2
+    },
+    // {
+    //   command: 'alphabet yes',
+    //   callback: (command, spokenPhrase, similarityRatio) => alphabetSpeech(command, spokenPhrase, similarityRatio),
+    //   // setMessage(`${command} and ${spokenPhrase} are ${similarityRatio * 100}% similar`),
+    //   // If the spokenPhrase is "Benji", the message would be "Beijing and Benji are 40% similar"
+    //   isFuzzyMatch: true,
+    //   fuzzyMatchingThreshold: 0.2
+    // },
   ]
 
   // const { transcript } = useSpeechRecognition({ commands })
@@ -73,11 +89,21 @@ const Dictaphone = () => {
   const {
     transcript
   } = useSpeechRecognition({ commands });
-  const startListening = () => SpeechRecognition.startListening({ continuous: true });
+  //const startListening = () => SpeechRecognition.startListening({ continuous: true });
 
-  const saveText = () => {
+  const saveText = (replaceText) => {
 
-    setupdateText([...updateText, transcript.replaceAll("ok", "")])
+    setupdateText([...updateText, transcript.replaceAll(replaceText, "")])
+  };
+
+  const alphabetSpeech = (command, spokenPhrase, similarityRatio) => {
+    console.log("command ", command)
+    console.log("spokenPhrase ", spokenPhrase)
+    console.log("similarityRatio ", similarityRatio)
+    if(similarityRatio > 0.9){
+      console.log("ration s")
+      setMessage(`s`)
+    }
   };
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
@@ -100,14 +126,14 @@ const Dictaphone = () => {
       >Hold to talk</button> */}
 
       <button onClick={(e) => { SpeechRecognition.startListening({ continuous: true }) }}>Start</button>
-      {/* <button onClick={SpeechRecognition.stopListening}>Stop</button> */}
-      {/* <button onClick={resetTranscript}>Reset</button> */}
-      {/* <p>{message}</p> */}
+       <button onClick={(e) => SpeechRecognition.stopListening()}>Stop</button> 
+      {/* <button onClick={resetTranscript}>Reset</button>*/}
+      <p>{message}</p>
       <p>{transcript}</p>
 
 
       {updateText && updateText.length > 0 && updateText.map((comment, i) =>
-        <p key={i}>{comment}</p>
+        <input key={i} value={comment}></input>
       )}
 
       {/* <p><b>Saved Text:</b> {updateText}</p> */}
