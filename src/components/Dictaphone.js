@@ -22,6 +22,7 @@
 import React, { useState } from 'react'
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
 
+
 const Dictaphone = () => {
   const [message, setMessage] = useState('')
   const [updateText, setupdateText] = useState([])
@@ -68,12 +69,12 @@ const Dictaphone = () => {
       command: 'stop',
       callback: () => SpeechRecognition.stopListening()
     },
-    {
-      command: "alphabet *",
-      callback: (alphabet) => setMessage(` ${alphabet}`),
-     // isFuzzyMatch: true,
-      //fuzzyMatchingThreshold: 0.2
-    },
+    // {
+    //   command: "alphabet *",
+    //   callback: (alphabet) => saveTranscript(`alphabet`),
+    //  // isFuzzyMatch: true,
+    //   //fuzzyMatchingThreshold: 0.2
+    // },
     // {
     //   command: 'alphabet yes',
     //   callback: (command, spokenPhrase, similarityRatio) => alphabetSpeech(command, spokenPhrase, similarityRatio),
@@ -86,7 +87,7 @@ const Dictaphone = () => {
 
   // const { transcript } = useSpeechRecognition({ commands })
 
-  const {
+  let {
     transcript
   } = useSpeechRecognition({ commands });
   //const startListening = () => SpeechRecognition.startListening({ continuous: true });
@@ -95,6 +96,12 @@ const Dictaphone = () => {
 
     setupdateText([...updateText, transcript.replaceAll(replaceText, "")])
   };
+
+  // const saveTranscript = (replaceText) => {
+  //   console.log("transcriptreplace ", transcript)
+  //   transcript = transcript.replaceAll(replaceText, "")
+  //   console.log("transcriptreplace next ", transcript)
+  // };
 
   const alphabetSpeech = (command, spokenPhrase, similarityRatio) => {
     console.log("command ", command)
@@ -109,7 +116,12 @@ const Dictaphone = () => {
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     return null
   }
-  console.log("commentsArr ", updateText)
+  console.log("transcript ", transcript)
+ // $("input:text").val();
+if(document.getElementById("myText")){
+  document.getElementById("myText").value =  transcript.replaceAll("alphabet", "").replaceAll("yes", "s")
+}
+  
 
   return (
 
@@ -129,7 +141,9 @@ const Dictaphone = () => {
        <button onClick={(e) => SpeechRecognition.stopListening()}>Stop</button> 
       {/* <button onClick={resetTranscript}>Reset</button>*/}
       <p>{message}</p>
-      <p>{transcript}</p>
+      <p className="textclass">
+        <input type="text" id="myText" />
+        </p>
 
 
       {updateText && updateText.length > 0 && updateText.map((comment, i) =>
